@@ -15,6 +15,7 @@ ENV \
   DEBIAN_FRONTEND=noninteractive \
   KWKHTMLTOPDF_SERVER_URL=http://kwkhtmltopdf
 
+
 ADD https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu/dists/$DISTRO/Release /tmp/
 RUN --mount=type=bind,source=./install,target=/tmp/install \
   set -x \
@@ -25,18 +26,6 @@ RUN --mount=type=bind,source=./install,target=/tmp/install \
   && /tmp/install/wkhtmltopdf.sh \
   && /tmp/install/pgdg.sh \
   && /tmp/install/post-install-clean.sh
-#create odoo user
-RUN groupadd -r odoo && useradd -m -r -g odoo odoo
-
-# Install git and clone extra addons
-RUN set -x \
-  && apt-get update \
-  && apt-get install -y git \
-  && mkdir -p /mnt/extra-addons \
-  && git clone https://github.com/azeem-sarwar/odoo_oauth.git /mnt/extra-addons/odoo_oauth \
-  && chown -R odoo:odoo /mnt/extra-addons \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
 
 # isolate from system python libraries
 RUN set -x \
