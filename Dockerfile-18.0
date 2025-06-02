@@ -18,7 +18,8 @@ RUN apt-get update && \
         wget \
         gnupg2 \
         lsb-release \
-        xz-utils && \
+        xz-utils \
+        git && \
     rm -rf /var/lib/apt/lists/*
 
 # Add NodeSource repository and install Node.js
