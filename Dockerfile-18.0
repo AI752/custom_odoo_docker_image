@@ -15,6 +15,10 @@ ENV \
   DEBIAN_FRONTEND=noninteractive \
   KWKHTMLTOPDF_SERVER_URL=http://kwkhtmltopdf
 
+# Define extra addons to clone
+ENV EXTRA_ADDONS=(
+    "https://github.com/azeem-sarwar/odoo_oauth.git"
+)
 
 ADD https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu/dists/$DISTRO/Release /tmp/
 RUN --mount=type=bind,source=./install,target=/tmp/install \
@@ -25,6 +29,12 @@ RUN --mount=type=bind,source=./install,target=/tmp/install \
   && /tmp/install/python3.sh \
   && /tmp/install/wkhtmltopdf.sh \
   && /tmp/install/pgdg.sh \
+  && apt-get update \
+  && apt-get install -y git \
+  && mkdir -p /mnt/extra-addons \
+  && for repo in "${EXTRA_ADDONS[@]}"; do \
+       git clone "$repo" /mnt/extra-addons/$(basename "$repo" .git); \
+     done \
   && /tmp/install/post-install-clean.sh
 
 # isolate from system python libraries
