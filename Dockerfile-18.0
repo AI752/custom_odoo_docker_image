@@ -25,6 +25,8 @@ RUN --mount=type=bind,source=./install,target=/tmp/install \
   && /tmp/install/wkhtmltopdf.sh \
   && /tmp/install/pgdg.sh \
   && /tmp/install/post-install-clean.sh
+#create odoo user
+RUN groupadd -r odoo && useradd -m -r -g odoo odoo
 
 # Install git and clone extra addons
 RUN set -x \
