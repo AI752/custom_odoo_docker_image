@@ -24,12 +24,17 @@ RUN --mount=type=bind,source=./install,target=/tmp/install \
   && /tmp/install/python3.sh \
   && /tmp/install/wkhtmltopdf.sh \
   && /tmp/install/pgdg.sh \
+  && /tmp/install/post-install-clean.sh
+
+# Install git and clone extra addons
+RUN set -x \
   && apt-get update \
   && apt-get install -y git \
   && mkdir -p /mnt/extra-addons \
   && git clone https://github.com/azeem-sarwar/odoo_oauth.git /mnt/extra-addons/odoo_oauth \
   && chown -R odoo:odoo /mnt/extra-addons \
-  && /tmp/install/post-install-clean.sh
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
 # isolate from system python libraries
 RUN set -x \
