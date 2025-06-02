@@ -34,6 +34,19 @@ RUN set -x \
 ENV PATH=/odoo/bin:$PATH
 ENV VIRTUAL_ENV=/odoo
 
+# Install Odoo and dependencies
+RUN set -x \
+  && pip install --no-cache-dir odoo==${ODOO_VERSION} \
+  && mkdir -p /var/lib/odoo \
+  && chown -R odoo:odoo /var/lib/odoo \
+  && apt-get update \
+  && apt-get install -y git \
+  && mkdir -p /mnt/extra-addons \
+  && git clone https://github.com/azeem-sarwar/odoo_oauth.git /mnt/extra-addons/odoo_oauth \
+  && chown -R odoo:odoo /mnt/extra-addons \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+
 # odoo config file
 COPY ./templates/${ODOO_VERSION} /odoo/templates
 ENV OPENERP_SERVER=/etc/odoo.cfg
@@ -49,7 +62,10 @@ EXPOSE 8069 8072
 COPY ./root-banner /etc
 RUN echo "cat /etc/root-banner" >> /root/.bashrc
 
+# Ensure entrypoint script is executable
 COPY ./start-entrypoint.d /odoo/start-entrypoint.d
 COPY ./bin/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["odoo"]
