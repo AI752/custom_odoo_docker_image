@@ -9,7 +9,7 @@ ENV LANG en_US.UTF-8
 # Retrieve the target architecture to install the correct wkhtmltopdf package
 ARG TARGETARCH
 
-# Install basic dependencies first
+# Add NodeSource repository for Node.js
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
@@ -19,6 +19,7 @@ RUN apt-get update && \
         gnupg2 \
         lsb-release \
         xz-utils && \
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
     rm -rf /var/lib/apt/lists/*
 
 # Install wkhtmltopdf
@@ -44,8 +45,8 @@ RUN apt-get update && \
         dirmngr \
         fonts-noto-cjk \
         libssl-dev \
+        nodejs \
         node-less \
-        npm \
         git \
         python3-magic \
         python3-num2words \
@@ -62,6 +63,7 @@ RUN apt-get update && \
         python3-watchdog \
         python3-xlrd \
         python3-xlwt && \
+    npm install -g rtlcss && \
     rm -rf /var/lib/apt/lists/*
 
 # install latest postgresql-client
@@ -77,9 +79,6 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ noble-pgdg main' > /etc/a
     && apt-get install --no-install-recommends -y postgresql-client \
     && rm -f /etc/apt/sources.list.d/pgdg.list \
     && rm -rf /var/lib/apt/lists/*
-
-# Install rtlcss (on Debian buster)
-RUN npm install -g rtlcss
 
 # Install Odoo
 ENV ODOO_VERSION 18.0
