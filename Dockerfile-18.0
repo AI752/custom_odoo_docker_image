@@ -54,12 +54,8 @@ RUN apt-get update && \
         python3-xlwt && \
     rm -rf /var/lib/apt/lists/*
 
-# Install node-less separately after Node.js is installed
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y --no-install-recommends \
-        node-less && \
-    rm -rf /var/lib/apt/lists/*
+# Install less and rtlcss through npm
+RUN npm install -g less rtlcss
 
 # Install wkhtmltopdf
 RUN if [ -z "${TARGETARCH}" ]; then \
@@ -76,9 +72,6 @@ RUN if [ -z "${TARGETARCH}" ]; then \
     && apt-get update \
     && apt-get install -y --no-install-recommends ./wkhtmltox.deb \
     && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
-
-# Install rtlcss
-RUN npm install -g rtlcss
 
 # install latest postgresql-client
 RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ noble-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
