@@ -16,16 +16,6 @@ ENV \
   KWKHTMLTOPDF_SERVER_URL=http://kwkhtmltopdf
 
 
-# Install git and clone extra addons
-RUN set -x \
-  && apt-get update \
-  && apt-get install -y git \
-  && mkdir -p /mnt/extra-addons \
-  && git clone https://github.com/azeem-sarwar/odoo_oauth.git /mnt/extra-addons/odoo_oauth \
-  && chown -R odoo:odoo /mnt/extra-addons \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
-
 ADD https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu/dists/$DISTRO/Release /tmp/
 RUN --mount=type=bind,source=./install,target=/tmp/install \
   set -x \
@@ -43,8 +33,6 @@ RUN set -x \
   && /odoo/bin/pip install --no-cache-dir -U pip
 ENV PATH=/odoo/bin:$PATH
 ENV VIRTUAL_ENV=/odoo
-
-
 
 # odoo config file
 COPY ./templates/${ODOO_VERSION} /odoo/templates
