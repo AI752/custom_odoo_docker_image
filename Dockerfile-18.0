@@ -34,22 +34,6 @@ RUN set -x \
 ENV PATH=/odoo/bin:$PATH
 ENV VIRTUAL_ENV=/odoo
 
-# Install Odoo
-RUN set -x \
-  && pip install --no-cache-dir odoo==${ODOO_VERSION} \
-  && mkdir -p /var/lib/odoo \
-  && chown -R odoo:odoo /var/lib/odoo
-
-# Install git and clone extra addons
-RUN set -x \
-  && apt-get update \
-  && apt-get install -y git \
-  && mkdir -p /mnt/extra-addons \
-  && git clone https://github.com/azeem-sarwar/odoo_oauth.git /mnt/extra-addons/odoo_oauth \
-  && chown -R odoo:odoo /mnt/extra-addons \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
-
 # odoo config file
 COPY ./templates/${ODOO_VERSION} /odoo/templates
 ENV OPENERP_SERVER=/etc/odoo.cfg
